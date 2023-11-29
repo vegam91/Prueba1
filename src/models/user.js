@@ -8,21 +8,13 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  email: {
-    type: String,
-    required: true,
-  },
-
-  contraseña: { type: String, required: true, minlength: 8 },
-
-  movies: [{ type: ObjectId, ref: "Movie" }],
+  password: { type: String, required: true, minlength: 8 },
 });
 
 userSchema.methods.generateJWT = function () {
   return jwt.sign(
     {
       _id: this._id,
-      email: this.email,
     },
     process.env.jwtPrivateKey
   );
