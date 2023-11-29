@@ -3,14 +3,22 @@ const { ObjectId } = mongoose.Schema.Types;
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  
-  contraseña: { type: String, required: true },
+  nombre: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+  },
+
+  contraseña: { type: String, required: true, minlength: 8 },
 
   movies: [{ type: ObjectId, ref: "Movie" }],
 });
 
-UserSchema.methods.generateJWT = function () {
+userSchema.methods.generateJWT = function () {
   return jwt.sign(
     {
       _id: this._id,
