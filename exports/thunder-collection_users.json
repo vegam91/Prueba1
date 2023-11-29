@@ -1,0 +1,47 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "users",
+    "dateExported": "2023-11-29T22:23:44.946Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "e41593f0-81d4-4a76-b383-997ae1ff7361",
+            "colId": "6111193c-0755-4590-b65d-95451a834fab",
+            "containerId": "",
+            "name": "register",
+            "url": "localhost:3000/api/users/register",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-11-29T09:54:17.520Z",
+            "modified": "2023-11-29T22:22:10.320Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\":\"user1\",\n  \"password\":\"user1234\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e6ac63a5-262f-4522-9fbc-c152e6a05859",
+            "colId": "6111193c-0755-4590-b65d-95451a834fab",
+            "containerId": "",
+            "name": "login",
+            "url": "localhost:3000/api/users/login",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-11-29T13:12:17.244Z",
+            "modified": "2023-11-29T22:22:27.066Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\":\"user1\",\n  \"password\":\"user1234\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}

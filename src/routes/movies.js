@@ -1,13 +1,14 @@
 const express = require("express");
-const { param, body } = require("express-validator");
+const { param, body, query } = require("express-validator");
 const router = express.Router();
 const validate = require("../middleware/validate");
 const isAuth = require("../middleware/isAuth");
 const MovieControllers = require("../controllers/movies");
+const mongoose = require("mongoose");
 
 const Category = require("../models/category");
 
-const ValidationSchemaByBody = [
+const validationSchemaByBody = [
   body("title")
     .isString()
     .withMessage("el titulo no está en formato valido")
@@ -30,13 +31,66 @@ const ValidationSchemaByBody = [
     if (!category) throw new Error("Categoria no registrada");
   }),
 ];
+const validationSchemaByParam = [
+  param("movieId")
+    .isMongoId()
+    .withMessage("el id debe estar en formato valido"),
+];
+
+const validationSchemaByQuery = [
+  query("category")
+    .optional()
+    .custom((value) => {
+      if (Array.isArray(value)) return true;
+      if (mongoose.Types.ObjectId.isValid(value)) return true;
+
+      throw new Error("las categorias deben ir en formato valido");
+    }),
+  query("category.*")
+    .optional()
+    .isMongoId()
+    .withMessage("las categorias deben ir en formato valido"),
+];
+
+router.get(
+  "/",
+  isAuth,
+  validationSchemaByQuery,
+  validate,
+  MovieControllers.getUserMovies
+);
+
+router.get(
+  "/:movieId",
+  isAuth,
+  validationSchemaByParam,
+  validate,
+  MovieControllers.getUserMovieById
+);
 
 router.post(
   "/",
   isAuth,
-  ValidationSchemaByBody,
+  validationSchemaByBody,
   validate,
-  MovieControllers.addNewMovie
+  MovieControllers.createUserMovie
+);
+
+router.put(
+  "/:movieId",
+  isAuth,
+  validationSchemaByParam,
+  validationSchemaByBody,
+  validate,
+  MovieControllers.updateUserMovie
+);
+
+router.delete(
+  "/:movieId",
+  isAuth,
+  validationSchemaByParam,
+  validate,
+  MovieControllers.logicalDeleteMovie
 );
 
 module.exports = router;

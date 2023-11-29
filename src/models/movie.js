@@ -10,9 +10,9 @@ const movieSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    categories:[{type: ObjectId,ref:"Category", required: true}]
+    categories: [{ type: ObjectId, ref: "Category", required: true }],
+    deleted: { type: Boolean, default: false },
   },
-  // deleted: { type: Boolean},
 
   { timestamps: true }
 );

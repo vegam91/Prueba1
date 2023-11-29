@@ -5,36 +5,29 @@ const { body } = require("express-validator");
 
 const router = express.Router();
 
-const userRegisterValidation = [
-  body("nombre").notEmpty().withMessage("No puede estar vacío"),
-
-  body("email").notEmpty().withMessage("No puede estar vacío"),
-
-  body("contraseña")
-    .notEmpty()
-    .withMessage("No puede estar vacío")
-    .isLength({ min: 8 })
-    .withMessage("Al menos 8 caracteres"),
-];
 const userValidationSchemaByBody = [
-  body("email")
+  body("username")
     .notEmpty()
-
-    .withMessage("can't be empty"),
-
+    .withMessage("el nombre de usuario es obligatorio"),
   body("password")
     .notEmpty()
-
-    .withMessage("can't be empty"),
+    .withMessage("el password es obligatorio")
+    .isLength({ min: 8 })
+    .withMessage("el password debe tener mínimo 8 caracteres"),
 ];
+
 router.post(
   "/register",
+  userValidationSchemaByBody,
   validate,
-  userRegisterValidation,
   userControllers.register
 );
 
-router.post("/login", userValidationSchemaByBody, validate, userControllers.login)
+router.post(
+  "/login",
+  userValidationSchemaByBody,
+  validate,
+  userControllers.login
+);
 
-
-module.exports = router
+module.exports = router;
