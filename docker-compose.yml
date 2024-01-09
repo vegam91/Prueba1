@@ -1,7 +1,13 @@
 version: '3'
 services:
   app:
-    container_name: node-mongo-app
+    image: node:18
+    environment: 
+     JWT_SECRET: "sdljngsadfnsdaofj"
+     MONGO_URI: mongodb://mongo:27017/moviess"
+    depends_on:
+      - mongo
+    container_name: app
     volumes:
       - .:/app
     restart: always
@@ -10,9 +16,19 @@ services:
       - '3000:3000'
     links:
       - mongo
+    networks:
+    - movie-network
   mongo:
     container_name: mongo
     image: mongo
     restart: always 
     ports:
       - '27017:27017'
+    volumes: 
+    - /db
+    networks:
+    - movie-network
+
+networks:
+  movie-network:
+    driver: bridge
