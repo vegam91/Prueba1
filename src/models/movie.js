@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const User = require("../models/user");
-
+const sequelize = require("../startup/db")
 class Movie extends Model {}
 
 User.init(
