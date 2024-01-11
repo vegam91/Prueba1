@@ -1,4 +1,4 @@
-const { Model, Datatypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const User = require("../models/user");
 
 class Movie extends Model {}
@@ -6,20 +6,20 @@ class Movie extends Model {}
 User.init(
   {
     movie_id: {
-      type: Datatypes.UUID,
-      defaultValue: Datatypes.UUIDV4,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     title: {
-      type: Datatypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     released_year: {
-      type: Datatypes.STRING,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     user_id: {
-      type: Datatypes.UUID,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: User,
@@ -27,7 +27,7 @@ User.init(
       },
     },
     delete: {
-      type: Datatypes.BOOLEAN,
+      type: DataTypes.BOOLEAN,
     },
   },
   {
