@@ -1,25 +1,28 @@
-const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema.Types;
-const jwt = require("jsonwebtoken");
+const { Model, Datatypes } = require("sequelize");
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: { type: String, required: true, minlength: 8 },
-});
+class User extends Model {}
 
-userSchema.methods.generateJWT = function () {
-  return jwt.sign(
-    {
-      _id: this._id,
+User.init(
+  {
+    user_id: {
+      type: Datatypes.UUID,
+      defaultValue: Datatypes.UUIDV4,
+      primaryKey: true,
     },
-    process.env.JWT_PRIVATE_KEY
-  );
-};
-
-const User = mongoose.model("User", userSchema);
+    name: {
+      type: Datatypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: Datatypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    ModelName: "User",
+    tableName: "Users",
+  }
+);
 
 module.exports = User;
