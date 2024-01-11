@@ -3,27 +3,26 @@ const User = require("../models/user");
 
 const register = async (req, res, next) => {
   try {
-    const { username, password: plainTextPassword } = req.body;
-
-    const user = await User.findOne({ username });
-
-    if (user) {
+    const { user_name, password: plainTextPassword } = req.body;
+    const existingUser= await User.findOne({
+      where:{user_name}
+    })
+    if (existingUser) {
       return res.status(400).json({
         error: "Nombre de usuario en uso",
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(plainTextPassword, salt);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
 
-    const newUser = await User.create({ username, password });
+    const newUser = await User.create({ 
+      user_name, 
+      password : hashedPassword
+    });
     const token = newUser.generateJWT();
 
-    res
-      .setHeader("x-auth-token", token)
-      .setHeader("Access-Control-Expose-Headers", "x-auth-token")
-      .status(201)
-      .json({ message: "Usuario registrado" });
+    res.status(201).json({message:"Usuario registrado",token})
   } catch (err) {
     next(err);
   }

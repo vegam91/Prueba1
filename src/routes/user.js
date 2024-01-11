@@ -6,7 +6,7 @@ const { body } = require("express-validator");
 const router = express.Router();
 
 const userValidationSchemaByBody = [
-  body("username")
+  body("user_name")
     .notEmpty()
     .withMessage("el nombre de usuario es obligatorio"),
   body("password")
@@ -23,11 +23,11 @@ router.post(
   userControllers.register
 );
 
-router.post(
-  "/login",
-  userValidationSchemaByBody,
-  validate,
-  userControllers.login
-);
+// router.post(
+//   "/login",
+//   userValidationSchemaByBody,
+//   validate,
+//   userControllers.login
+// );
 
 module.exports = router;

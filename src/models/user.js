@@ -9,7 +9,7 @@ User.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
+    user_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -21,7 +21,7 @@ User.init(
   {
     sequelize,
     modelName: "User",
-    tableName: "Users",
+    tableName: "users",
   }
 );
 

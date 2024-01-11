@@ -3,7 +3,7 @@ const User = require("../models/user");
 const sequelize = require("../startup/db")
 class Movie extends Model {}
 
-User.init(
+Movie.init(
   {
     movie_id: {
       type: DataTypes.UUID,
@@ -33,7 +33,7 @@ User.init(
   {
     sequelize,
     modelName: "Movie",
-    tableName: "Movies",
+    tableName: "movies",
   }
 );
 

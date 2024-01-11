@@ -1,9 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
-
 const helmet = require("helmet");
 const compression = require("compression");
+
+const sequelize= require("../startup/db")
+
 
 module.exports = function (app) {
   app.use(express.json());
@@ -16,12 +17,12 @@ module.exports = function (app) {
 
   app.get("/health", async (req, res) => {
     try {
-      await mongoose.connection.db.admin().ping();
+      await sequelize.authenticate();
       res.json({ status: "OK", message: "Health check passed" });
     } catch (err) {
       res.status(500).json({
-        status: "MongoDB Connection Error",
-        message: "Unable to connect to MongoDB",
+        status: "Sequelize Connection Error",
+        message: "Unable to connect to Sequelize ",
       });
     }
   });
