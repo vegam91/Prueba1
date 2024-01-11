@@ -1,22 +1,40 @@
-const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema.Types;
+const { Model, Datatypes } = require("sequelize");
+const User = require("../models/user");
 
-const movieSchema = new mongoose.Schema(
+class Movie extends Model {}
+
+User.init(
   {
-    title: { type: String, required: true },
-    releasedYear: { type: Number, required: true },
-    owner: {
-      type: ObjectId,
-      ref: "User",
-      required: true,
+    movie_id: {
+      type: Datatypes.UUID,
+      defaultValue: Datatypes.UUIDV4,
+      primaryKey: true,
     },
-    categories: [{ type: ObjectId, ref: "Category", required: true }],
-    deleted: { type: Boolean, default: false },
+    title: {
+      type: Datatypes.STRING,
+      allowNull: false,
+    },
+    released_year: {
+      type: Datatypes.STRING,
+      allowNull: false,
+    },
+    user_id: {
+      type: Datatypes.UUID,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "user_id",
+      },
+    },
+    delete: {
+      type: Datatypes.BOOLEAN,
+    },
   },
-
-  { timestamps: true }
+  {
+    sequelize,
+    ModelName: "Movie",
+    tableName: "Movies",
+  }
 );
-
-const Movie = mongoose.model("Movie", movieSchema);
 
 module.exports = Movie;
