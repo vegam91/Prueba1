@@ -32,7 +32,7 @@ User.init(
   },
   {
     sequelize,
-    ModelName: "Movie",
+    modelName: "Movie",
     tableName: "Movies",
   }
 );
