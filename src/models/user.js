@@ -1,6 +1,22 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../startup/db")
-class User extends Model {}
+const jwt = require("jsonwebtoken")
+const { secretKey } = require("../startup/config")
+
+class User extends Model {
+
+  generateJWT() {
+    const payload = {
+      user_id: this.user_id,
+      user_name: this.user_name,
+    };
+    console.log("AQUI JWT",payload)
+    console.log("private key aqui", secretKey)
+
+    return jwt.sign(payload, secretKey, { expiresIn: "1h" });
+  }
+
+}
 
 User.init(
   {

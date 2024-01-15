@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-require("./src/startup/config")();
+const config = require("./src/startup/config");
 require("./src/startup/db");
-require("./src/startup/routes")(app);
+require("./src/startup/routes")(app, config);
 
 app.listen(3000, () => console.log("SERVER ON...."));

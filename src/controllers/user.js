@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
+
 const register = async (req, res, next) => {
   try {
     const dataUser = req.body;
