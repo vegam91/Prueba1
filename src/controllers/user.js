@@ -1,12 +1,13 @@
+const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
 const register = async (req, res, next) => {
   try {
-    const { user_name, password: plainTextPassword } = req.body;
-    const existingUser= await User.findOne({
-      where:{user_name}
-    })
+    const dataUser = req.body;
+    const existingUser = await User.findOne({
+      where: { user_name: dataUser.user_name },
+    });
     if (existingUser) {
       return res.status(400).json({
         error: "Nombre de usuario en uso",
@@ -14,16 +15,17 @@ const register = async (req, res, next) => {
     }
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
+    const hashedPassword = await bcrypt.hash(dataUser.password, saltRounds);
 
-    const newUser = await User.create({ 
-      user_name, 
-      password : hashedPassword
+    const newUser = await User.create({
+      user_name: dataUser.user_name,
+      password:  hashedPassword,
     });
     const token = newUser.generateJWT();
 
-    res.status(201).json({message:"Usuario registrado",token})
+    res.status(201).json({ message: "Usuario registrado", token });
   } catch (err) {
+    console.error("Error en el registro", err);
     next(err);
   }
 };

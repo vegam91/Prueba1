@@ -26,7 +26,7 @@ Movie.init(
         key: "user_id",
       },
     },
-    delete: {
+    deleted: {
       type: DataTypes.BOOLEAN,
     },
   },

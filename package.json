@@ -16,9 +16,11 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
+    "migrate:up": "npx sequelize-cli db:migrate",
     "seed": "node seedCategory.js"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "sequelize-cli": "^6.6.2"
   }
 }
