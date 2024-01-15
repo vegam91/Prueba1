@@ -3,18 +3,14 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('users', {
-      user_id: {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('categories', {
+      category_id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      user_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      password: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -29,7 +25,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('users');
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('categories');
   }
 };
