@@ -6,7 +6,7 @@ module.exports = {
     await queryInterface.createTable("movies", {
       movie_id: {
         type: Sequelize.UUID,
-        defaultvalue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       title: {
@@ -26,7 +26,7 @@ module.exports = {
         },
       },
       deleted: {
-        type: Sequelize.DATE,
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,

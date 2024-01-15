@@ -1,8 +1,9 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
+const {Sequelize, DataTypes} = require("sequelize");
+const sequelize = require("./src/startup/db")
 const Category = require("./src/models/category");
 
-require("./src/startup/db")();
+require("./src/startup/db");
 
 const categories = [
   "Terror",
@@ -15,21 +16,22 @@ const categories = [
   "Drama",
 ];
 
-const docs = categories.map((category) => new Category({ name: category }));
 
 loadSeed();
 
 async function loadSeed() {
   try {
-    await Category.deleteMany({});
+    await sequelize.sync({force:true});
 
-    const createdDocs = await Category.create(docs);
+    const createdDocs = await Category.bulkCreate(
+      categories.map((category)=>({name:category}))
+    );
 
     console.log("Categorias creadas:");
     console.log(
-      createdDocs.map((doc) => ({ id: doc._id.toString(), name: doc.name }))
+      createdDocs.map((doc) => ({ id: doc.category_id, name: doc.name }))
     );
-    mongoose.disconnect();
+    await sequelize.close();
   } catch (err) {
     console.log("Error al cargar la semilla");
   }

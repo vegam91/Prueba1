@@ -4,9 +4,10 @@ const router = express.Router();
 const validate = require("../middleware/validate");
 const isAuth = require("../middleware/isAuth");
 const MovieControllers = require("../controllers/movies");
-const mongoose = require("mongoose");
+const sequelize = require("../startup/db");
+const Category = require("../models/category")
 
-const Category = require("../models/category");
+
 
 const validationSchemaByBody = [
   body("title")
@@ -26,7 +27,7 @@ const validationSchemaByBody = [
     .isMongoId()
     .withMessage("las categorias deben ir en formato valido"),
   body("categories.*").custom(async (categoryId) => {
-    const category = await Category.findById(categoryId);
+    const category = await Category.findByPk(categoryId);
 
     if (!category) throw new Error("Categoria no registrada");
   }),

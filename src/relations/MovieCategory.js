@@ -9,13 +9,14 @@ MovieCategory.init(
     relation_id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
-    categroy_id: {
+    category_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: Category,
-        key: "movie_id",
+        key: "category_id",
       },
     },
     movie_id: {

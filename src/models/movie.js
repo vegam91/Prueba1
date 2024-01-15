@@ -15,7 +15,7 @@ Movie.init(
       allowNull: false,
     },
     released_year: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     user_id: {
@@ -34,7 +34,11 @@ Movie.init(
     sequelize,
     modelName: "Movie",
     tableName: "movies",
-  }
-);
+  });
+  Movie.belongsTo(User, {
+    foreignKey: "user_id",
+    onDelete: "CASCADE",
+  });
+
 
 module.exports = Movie;

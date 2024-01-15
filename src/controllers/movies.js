@@ -1,5 +1,5 @@
 const Movie = require("../models/movie");
-
+const Category = require("../models/category")
 const getUserMovies = async (req, res, next) => {
   try {
     console.log(req.query);
@@ -54,20 +54,40 @@ const getUserMovieById = async (req, res, next) => {
 
 const createUserMovie = async (req, res, next) => {
   try {
-    const { title, releasedYear, categories } = req.body;
-    const owner = req.user._id;
+    const { title, released_year, categories } = req.body;
+    const userId = req.user.user_id; 
+
+   
     const newMovie = await Movie.create({
       title,
-      releasedYear,
-      owner,
-      categories: [...new Set(categories)],
+      released_year: released_year, 
+      user_id: userId,
     });
+
+   
+    const categoryInstances = await Promise.all(
+      categories.map(category => Category.findOrCreate({
+        where: { name: category },
+        defaults: { name: category }
+      }))
+    );
+
+    await Promise.all(
+      categoryInstances.map(categoryInstance =>
+        MovieCategory.create({
+          category_id: categoryInstance[0].category_id,
+          movie_id: newMovie.movie_id,
+        })
+      )
+    );
 
     res.status(201).json(newMovie);
   } catch (err) {
     next(err);
   }
 };
+
+
 const updateUserMovie = async (req, res, next) => {
   try {
     const { movieId } = req.params;
