@@ -23,11 +23,11 @@ router.post(
   userControllers.register
 );
 
-// router.post(
-//   "/login",
-//   userValidationSchemaByBody,
-//   validate,
-//   userControllers.login
-// );
+router.post(
+  "/login",
+  userValidationSchemaByBody,
+  validate,
+  userControllers.login
+);
 
 module.exports = router;

@@ -33,9 +33,9 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { username, password: plainTextPassword } = req.body;
+    const { user_name, password: plainTextPassword } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ where: { user_name } });
     if (!user) {
       return res
         .status(400)
