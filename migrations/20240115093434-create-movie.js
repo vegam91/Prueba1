@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       released_year: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       user_id: {
@@ -22,7 +22,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: "users",
-          key:'user_id'
+          key: "user_id",
         },
       },
       deleted: {
@@ -30,16 +30,16 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('movies');
+    await queryInterface.dropTable("movies");
   },
 };

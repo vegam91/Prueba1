@@ -15,7 +15,7 @@ const validationSchemaByBody = [
     .withMessage("el titulo no está en formato valido")
     .notEmpty()
     .withMessage("el año de estreno es obligatorio"),
-  body("releasedYear")
+  body("released_year")
     .isInt()
     .withMessage("el año no está en formato valido")
     .notEmpty()
@@ -24,7 +24,7 @@ const validationSchemaByBody = [
     .isArray({ min: 1 })
     .withMessage("debe pasar una colección con almenos una categoría"),
   body("categories.*")
-    .isMongoId()
+  .isUUID(4)
     .withMessage("las categorias deben ir en formato valido"),
   body("categories.*").custom(async (categoryId) => {
     const category = await Category.findByPk(categoryId);
@@ -34,7 +34,7 @@ const validationSchemaByBody = [
 ];
 const validationSchemaByParam = [
   param("movieId")
-    .isMongoId()
+    .isUUID(4)
     .withMessage("el id debe estar en formato valido"),
 ];
 

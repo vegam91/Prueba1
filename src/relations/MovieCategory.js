@@ -1,6 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
 const Category = require("../models/category");
 const Movie = require("../models/movie");
+const sequelize = require("../startup/db")
+
+
 
 class MovieCategory extends Model {}
 
@@ -24,7 +27,7 @@ MovieCategory.init(
       allowNull: false,
       references: {
         model: Movie,
-        key: movie_id,
+        key: "movie_id",
       },
     },
   },
