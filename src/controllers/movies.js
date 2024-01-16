@@ -1,10 +1,9 @@
+const { Op } = require("sequelize");
+const sequelize = require("../startup/db");
 const Movie = require("../models/movie");
-const Category = require("../models/category")
-const MovieCategory = require("../relations/MovieCategory")
+const Category = require("../models/category");
 
-
-
-
+const MovieCategory = require("../relations/MovieCategory");
 
 const getUserMovies = async (req, res, next) => {
   try {
@@ -61,25 +60,25 @@ const getUserMovieById = async (req, res, next) => {
 const createUserMovie = async (req, res, next) => {
   try {
     const { title, released_year, categories } = req.body;
-    const userId = req.user.user_id; 
+    const userId = req.user.user_id;
 
-   
     const newMovie = await Movie.create({
       title,
-      released_year: released_year, 
+      released_year: released_year,
       user_id: userId,
     });
 
-   
     const categoryInstances = await Promise.all(
-      categories.map(category => Category.findOrCreate({
-        where: { name: category },
-        defaults: { name: category }
-      }))
+      categories.map((category) =>
+        Category.findOrCreate({
+          where: { name: category },
+          defaults: { name: category },
+        })
+      )
     );
 
     await Promise.all(
-      categoryInstances.map(categoryInstance =>
+      categoryInstances.map((categoryInstance) =>
         MovieCategory.create({
           category_id: categoryInstance[0].category_id,
           movie_id: newMovie.movie_id,
@@ -93,34 +92,94 @@ const createUserMovie = async (req, res, next) => {
   }
 };
 
-
 const updateUserMovie = async (req, res, next) => {
   try {
     const { movieId } = req.params;
-    const { title, releasedYear, categories } = req.body;
+    console.log("AQUI movieId:", movieId);
+    const { title, released_year, categories } = req.body;
+    const userId = req.user.user_id;
+    console.log("AQUI userId:", userId);
 
-    const movie = await Movie.findOne({ _id: movieId, deleted: false });
+    const movie = await Movie.findByPk(movieId, {
+      where: {
+        movie_id: movieId,
+        user_id: userId,
+        deleted: false,
+      },
+    });
+    console.log("AQUI Movie model:", Movie);
+    console.log("AQUI Movie:", movie);
 
     if (!movie) {
-      return res.status(404).json({ error: "Pelicula no encontrado" });
+      return res.status(404).json({
+        error: "Película no encontrada",
+        userId,
+        movieId,
+        title,
+        released_year,
+      });
     }
 
-    const isOwner = movie.owner.toString() === req.user._id;
+    const updateQuery = {
+      title,
+      released_year,
+    };
 
-    if (!isOwner) {
-      return res
-        .status(403)
-        .json({ error: "La pelicula no pertenece al usuario" });
+    console.log(" AQUI Update Query:", updateQuery);
+    console.log("Query de Actualización:", Movie.update);
+    console.log("Antes de la consulta de actualización");
+
+    const [updatedRowCount] = await Movie.update(
+      { title, released_year },
+      {
+        where: {
+          movie_id: movieId,
+          user_id: userId,
+          [Op.or]: [{ deleted: false }, { deleted: null }],
+        },
+      }
+    ).catch((error) => {
+      console.error("error en la consulta", error);
+    });
+    console.log("Filas actualizadas:", updatedRowCount);
+    if (updatedRowCount === 0) {
+      console.error(
+        "La película no fue encontrada o no se actualizó correctamente."
+      );
+      return res.status(404).json({ error: "Película no encontrada" });
     }
 
-    const updatedMovie = await Movie.findByIdAndUpdate(
-      movieId,
-      { title, releasedYear, categories },
-      { new: true }
-    );
+    await MovieCategory.destroy({
+      where: {
+        movie_id: movieId,
+      },
+    });
+
+    for (const categoryId of categories) {
+      try {
+        const category = await Category.findByPk(categoryId);
+        if (category) {
+          await MovieCategory.create({
+            category_id: categoryId,
+            movie_id: movieId,
+          });
+        } else {
+          console.error("Categoría no encontrada:", categoryId);
+        }
+        console.log(
+          `AQUI Update Query (CategoryId: ${categoryId}):`,
+          updateQuery
+        );
+      } catch (error) {
+        console.error("Error en la asociación de categorías:", error);
+      }
+    }
+
+    const updatedMovie = await Movie.findByPk(movieId);
 
     res.json(updatedMovie);
   } catch (err) {
+    console.error(err);
     next(err);
   }
 };

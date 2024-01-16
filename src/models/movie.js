@@ -28,6 +28,7 @@ Movie.init(
     },
     deleted: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
