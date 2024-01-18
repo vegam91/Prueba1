@@ -26,6 +26,8 @@ module.exports = {
           model: 'movies',
           key: 'movie_id',
         },
+      }, deleted: {
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,

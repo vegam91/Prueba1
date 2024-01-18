@@ -21,7 +21,7 @@ loadSeed();
 
 async function loadSeed() {
   try {
-    await sequelize.sync({force:true});
+    // await sequelize.sync({force:true});
 
     const createdDocs = await Category.bulkCreate(
       categories.map((category)=>({name:category}))
@@ -33,6 +33,6 @@ async function loadSeed() {
     );
     await sequelize.close();
   } catch (err) {
-    console.log("Error al cargar la semilla");
+    console.error("Error al cargar la semilla:", err);
   }
 }

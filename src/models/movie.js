@@ -1,6 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
 const User = require("../models/user");
 const sequelize = require("../startup/db")
+const Category = require("../models/category")
+
+
 class Movie extends Model {}
 
 Movie.init(
@@ -30,16 +33,23 @@ Movie.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-  },
-  {
-    sequelize,
+   category_id:{
+    type: DataTypes.UUID,
+    allowNull: false,
+    references:{
+    model: Category,
+    key:"category_id"  }}},
+  
+    {sequelize,
     modelName: "Movie",
     tableName: "movies",
   });
+
   Movie.belongsTo(User, {
     foreignKey: "user_id",
     onDelete: "CASCADE",
   });
+
 
 
 module.exports = Movie;

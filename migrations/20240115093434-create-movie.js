@@ -1,5 +1,7 @@
 "use strict";
 
+const { DataTypes } = require("sequelize");
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -24,6 +26,13 @@ module.exports = {
           model: "users",
           key: "user_id",
         },
+      },
+      category_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model:"categories",
+        key: "category_id",}
       },
       deleted: {
         type: Sequelize.BOOLEAN,

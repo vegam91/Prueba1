@@ -5,6 +5,10 @@ const validate = require("../middleware/validate");
 const isAuth = require("../middleware/isAuth");
 const MovieControllers = require("../controllers/movies");
 const sequelize = require("../startup/db");
+const { Sequelize}= require ("sequelize")
+
+
+
 const Category = require("../models/category")
 
 
@@ -39,18 +43,25 @@ const validationSchemaByParam = [
 ];
 
 const validationSchemaByQuery = [
-  query("category")
+  query('category')
     .optional()
-    .custom((value) => {
-      if (Array.isArray(value)) return true;
-      if (mongoose.Types.ObjectId.isValid(value)) return true;
+    .custom(async (value) => {
+      console.log("before Op check")
+      if (!Array.isArray(value) && ! Sequelize.Validator.isUUID(value, 4)) {
+        throw new Error('Las categorías deben estar en un formato válido.');
+      }
+      console.log("after Op.uud check ")
 
-      throw new Error("las categorias deben ir en formato valido");
+      if (Array.isArray(value)) {
+        const invalidCategory = value.find((category) => !Sequelize.Validator.isUUID(category, 4));
+        if (invalidCategory) {
+          throw new Error('Las categorías deben estar en un formato válido.');
+        }
+      }
+
+    
+      return true;
     }),
-  query("category.*")
-    .optional()
-    .isMongoId()
-    .withMessage("las categorias deben ir en formato valido"),
 ];
 
 router.get(

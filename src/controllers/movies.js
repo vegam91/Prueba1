@@ -1,8 +1,6 @@
 const { Op } = require("sequelize");
-const sequelize = require("../startup/db");
 const Movie = require("../models/movie");
 const Category = require("../models/category");
-
 const MovieCategory = require("../relations/MovieCategory");
 
 const getUserMovies = async (req, res, next) => {
@@ -16,19 +14,37 @@ const getUserMovies = async (req, res, next) => {
     };
 
     if (search) {
-      filter.title = { $regex: search };
+      filter.title = { [Op.regexp]: search };
     }
 
     if (category) {
-      if (typeof category === "string") category = [category];
+      if (typeof category === "string") {
+        category = [category];
+      }
 
-      filter.categories = { $in: category };
+      filter.categories = { [Op.in]: category };
+
+      const movies = await Movie.findAll({
+        where: {
+          [Op.or]: [
+            { title: { [Op.like]: "%" + search + "%" } },
+
+            { category_id: { [Op.in]:  category} },
+          ],
+        },
+      });
+
+      res.status(200).json({message:"RESULTADO DE LA BUSQUEDA:",movies});
+
+
+    }else{
+      res.status(400).json({ message: "La busqueda con coincide" });
     }
 
-    const movies = await Movie.find(filter).populate("categories");
 
-    res.status(200).json(movies);
+    
   } catch (err) {
+    console.error("Error en la busqueda", err);
     next(err);
   }
 };
@@ -37,13 +53,15 @@ const getUserMovieById = async (req, res, next) => {
   try {
     const { movieId } = req.params;
 
-    const movie = await Movie.findOne({ _id: movieId, deleted: false });
+    const movie = await Movie.findOne({
+      where: { movie_id: movieId, deleted: false },
+    });
 
     if (!movie) {
       return res.status(404).json({ error: "Pelicula no encontrado" });
     }
 
-    const isOwner = movie.owner.toString() === req.user._id;
+    const isOwner = movie.user_id.toString() === req.user.user_id.toString();
 
     if (!isOwner) {
       return res
@@ -66,6 +84,7 @@ const createUserMovie = async (req, res, next) => {
       title,
       released_year: released_year,
       user_id: userId,
+      category_id: categories[0]
     });
 
     const categoryInstances = await Promise.all(
@@ -86,7 +105,7 @@ const createUserMovie = async (req, res, next) => {
       )
     );
 
-    res.status(201).json(newMovie);
+    res.status(201).json({ message: "Pelicula creada", newMovie });
   } catch (err) {
     next(err);
   }
@@ -135,7 +154,7 @@ const updateUserMovie = async (req, res, next) => {
         where: {
           movie_id: movieId,
           user_id: userId,
-          [Op.or]: [{ deleted: false }, { deleted: null }],
+          deleted: false,
         },
       }
     ).catch((error) => {
@@ -187,27 +206,36 @@ const updateUserMovie = async (req, res, next) => {
 const logicalDeleteMovie = async (req, res, next) => {
   try {
     const { movieId } = req.params;
+    const userId = req.user.user_id;
 
-    const movie = await Movie.findOne({ _id: movieId, deleted: false });
+    const movie = await Movie.findOne({
+      where: {
+        movie_id: movieId,
+        user_id: userId,
+        deleted: false,
+      },
+    });
+    const category = await MovieCategory.findOne({
+      where: {
+        movie_id: movieId,
 
-    if (!movie) {
-      return res.status(404).json({ error: "Pelicula no encontrado" });
-    }
+        deleted: false,
+      },
+    });
 
-    const isOwner = movie.owner.toString() === req.user._id;
-
-    if (!isOwner) {
-      return res
-        .status(403)
-        .json({ error: "La pelicula no pertenece al usuario" });
+    if (!movie || !category) {
+      return res.status(404).json({ error: "Película no encontrada" });
     }
 
     movie.deleted = true;
+    category.deleted = true;
 
-    const deletedMovie = await movie.save();
+    await movie.save();
+    await category.save();
 
-    res.status(204).json(deletedMovie);
+    res.status(204).json({ message: "Pelicula eliminada correctamente" });
   } catch (err) {
+    console.error(err);
     next(err);
   }
 };

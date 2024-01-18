@@ -30,7 +30,14 @@ MovieCategory.init(
         key: "movie_id",
       },
     },
-  },
+    deleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+
+    },
+
+  
   { sequelize, 
     modelName: "MovieCategory", 
     tableName: "movies_categories" 
