@@ -7,7 +7,7 @@ const register = async (req, res, next) => {
   try {
     const dataUser = req.body;
     const existingUser = await User.findOne({
-      where: { user_name: dataUser.user_name },
+      where: {user_email: dataUser.user_email },
     });
     if (existingUser) {
       return res.status(400).json({
@@ -19,7 +19,7 @@ const register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(dataUser.password, saltRounds);
 
     const newUser = await User.create({
-      user_name: dataUser.user_name,
+      user_email: dataUser.user_email,
       password:  hashedPassword,
     });
     const token = newUser.generateJWT();
@@ -33,9 +33,9 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { user_name, password: plainTextPassword } = req.body;
+    const { user_email, password: plainTextPassword } = req.body;
 
-    const user = await User.findOne({ where: { user_name } });
+    const user = await User.findOne({ where: { user_email } });
     if (!user) {
       return res
         .status(400)
