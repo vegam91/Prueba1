@@ -3,6 +3,24 @@ const Movie = require("../models/movie");
 const Category = require("../models/category");
 const MovieCategory = require("../relations/MovieCategory");
 
+
+
+
+
+// const getAllMovies = async (req,res,next) =>{
+//   try{
+
+//   }
+// }
+
+
+
+
+
+
+
+
+
 const getUserMovies = async (req, res, next) => {
   try {
     console.log(req.query);

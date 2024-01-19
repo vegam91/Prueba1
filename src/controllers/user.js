@@ -11,7 +11,7 @@ const register = async (req, res, next) => {
     });
     if (existingUser) {
       return res.status(400).json({
-        error: "Nombre de usuario en uso",
+        error: "Correo de usuario en uso",
       });
     }
 

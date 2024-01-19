@@ -6,9 +6,9 @@ const { body } = require("express-validator");
 const router = express.Router();
 
 const userValidationSchemaByBody = [
-  body("user_name")
+  body("user_email")
     .notEmpty()
-    .withMessage("el nombre de usuario es obligatorio"),
+    .withMessage("el correo de usuario es obligatorio"),
   body("password")
     .notEmpty()
     .withMessage("el password es obligatorio")
