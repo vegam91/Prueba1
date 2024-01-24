@@ -1,25 +1,26 @@
 const { Op } = require("sequelize");
+const User = require("../models/user");
 const Movie = require("../models/movie");
 const Category = require("../models/category");
 const MovieCategory = require("../relations/MovieCategory");
+const sendEmail = require("../../utils/email");
 
+const getAllMovies = async (req, res, next) => {
+  try {
+    console.log("AQUI EL CONTROLADOR");
 
+    const movies = await Movie.findAll({
+      where: {
+        deleted: false,
+      },
+    });
 
-
-
-// const getAllMovies = async (req,res,next) =>{
-//   try{
-
-//   }
-// }
-
-
-
-
-
-
-
-
+    res.status(200).json({ message: "Todas las peliculas", movies });
+  } catch (err) {
+    console.error("Error al obtener las peliculas", err);
+    next(err);
+  }
+};
 
 const getUserMovies = async (req, res, next) => {
   try {
@@ -47,20 +48,15 @@ const getUserMovies = async (req, res, next) => {
           [Op.or]: [
             { title: { [Op.like]: "%" + search + "%" } },
 
-            { category_id: { [Op.in]:  category} },
+            { category_id: { [Op.in]: category } },
           ],
         },
       });
 
-      res.status(200).json({message:"RESULTADO DE LA BUSQUEDA:",movies});
-
-
-    }else{
+      res.status(200).json({ message: "RESULTADO DE LA BUSQUEDA:", movies });
+    } else {
       res.status(400).json({ message: "La busqueda con coincide" });
     }
-
-
-    
   } catch (err) {
     console.error("Error en la busqueda", err);
     next(err);
@@ -102,7 +98,7 @@ const createUserMovie = async (req, res, next) => {
       title,
       released_year: released_year,
       user_id: userId,
-      category_id: categories[0]
+      category_id: categories[0],
     });
 
     const categoryInstances = await Promise.all(
@@ -122,6 +118,12 @@ const createUserMovie = async (req, res, next) => {
         })
       )
     );
+    const allUsers = await User.findAll({ attibutes: ["user_email"] });
+
+    allUsers.forEach(async (user) => {
+      const notificacionContent = `Se ha añadido una pelicula nueva: ${newMovie.title}`;
+      sendEmail(user.user_email, "Nueva Pelicula", notificacionContent);
+    });
 
     res.status(201).json({ message: "Pelicula creada", newMovie });
   } catch (err) {
@@ -259,6 +261,7 @@ const logicalDeleteMovie = async (req, res, next) => {
 };
 
 module.exports = {
+  getAllMovies,
   getUserMovies,
   getUserMovieById,
   createUserMovie,

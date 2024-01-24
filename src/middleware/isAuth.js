@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 module.exports = function (req, res, next) {
   const token = req.headers["x-auth-token"];
 
+
+if(req.path === "/allmovies"){
+  return next()
+}
   if (!token) return res.status(401).send("No hay token");
 
   try {

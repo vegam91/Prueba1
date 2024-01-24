@@ -63,7 +63,11 @@ const validationSchemaByQuery = [
       return true;
     }),
 ];
+router.get(
+"/all",
+MovieControllers.getAllMovies
 
+)
 router.get(
   "/",
   isAuth,
