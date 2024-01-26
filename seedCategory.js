@@ -21,7 +21,7 @@ loadSeed();
 
 async function loadSeed() {
   try {
-    // await sequelize.sync({force:true});
+    await sequelize.sync({force:true});
 
     const createdDocs = await Category.bulkCreate(
       categories.map((category)=>({name:category}))
